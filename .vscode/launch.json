@@ -9,7 +9,7 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/bin/Debug/net7.0/RepoTask.dll",
+            "program": "${workspaceFolder}/WebLayer/bin/Debug/net7.0/WebLayer.dll",
             "args": [],
             "cwd": "${workspaceFolder}",
             "stopAtEntry": false,
