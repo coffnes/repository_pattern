@@ -7,7 +7,6 @@ using RepoTask.BusinessLogicLayer.Strategies;
 using RepoTask.BusinessLogicLayer;
 using RepoTask.Test;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
