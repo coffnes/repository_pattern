@@ -26,7 +26,7 @@ public class WeatherGenerator : IHostedService
 
     public async Task Generate()
     {
-        for(int i = 0; i < 50; i++)
+        for(int i = 0; i < 40; i++)
         {
             await GeneratePlusTemperatures();
             await GenerateMinusTemperatures();
@@ -37,7 +37,7 @@ public class WeatherGenerator : IHostedService
     public async Task GeneratePlusTemperatures()
     {
         List<Entity<string>> chunk = new();
-        for(int i = 0; i < 200; i++)
+        for(int i = 0; i < 250; i++)
         {
             WeatherForecast weather = new()
             {
@@ -56,7 +56,7 @@ public class WeatherGenerator : IHostedService
     public async Task GenerateMinusTemperatures()
     {
         List<Entity<string>> chunk = new();
-        for(int i = 0; i < 200; i++)
+        for(int i = 0; i < 250; i++)
         {
             WeatherForecast weather = new()
             {
@@ -75,7 +75,7 @@ public class WeatherGenerator : IHostedService
     public async Task GenerateZeroTemperatures()
     {
         List<Entity<string>> chunk = new();
-        for(int i = 0; i < 200; i++)
+        for(int i = 0; i < 250; i++)
         {
             WeatherForecast weather = new()
             {
