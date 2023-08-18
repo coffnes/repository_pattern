@@ -26,14 +26,18 @@ public class WeatherGenerator : IHostedService
 
     public async Task Generate()
     {
-        await GeneratePlusTemperatures();
-        await GenerateMinusTemperatures();
-        await GenerateZeroTemperatures();
+        for(int i = 0; i < 50; i++)
+        {
+            await GeneratePlusTemperatures();
+            await GenerateMinusTemperatures();
+            await GenerateZeroTemperatures();
+        }
     }
 
     public async Task GeneratePlusTemperatures()
     {
-        for(int i = 0; i < 100; i++)
+        List<Entity<string>> chunk = new();
+        for(int i = 0; i < 200; i++)
         {
             WeatherForecast weather = new()
             {
@@ -41,12 +45,18 @@ public class WeatherGenerator : IHostedService
                 City = GenerateCity(),
                 Date = GenerateDate()
             };
-            await _handler.Handl(weather);
+            chunk.Add(weather);
         }
+        Temperature t = new()
+        {
+            TemperatureC = 1,
+        };
+        await _handler.HandlChunk(chunk, t);
     }
     public async Task GenerateMinusTemperatures()
     {
-        for(int i = 0; i < 100; i++)
+        List<Entity<string>> chunk = new();
+        for(int i = 0; i < 200; i++)
         {
             WeatherForecast weather = new()
             {
@@ -54,12 +64,18 @@ public class WeatherGenerator : IHostedService
                 City = GenerateCity(),
                 Date = GenerateDate()
             };
-            await _handler.Handl(weather);
+            chunk.Add(weather);
         }
+        Temperature t = new()
+        {
+            TemperatureC = -1,
+        };
+        await _handler.HandlChunk(chunk, t);
     }
     public async Task GenerateZeroTemperatures()
     {
-        for(int i = 0; i < 100; i++)
+        List<Entity<string>> chunk = new();
+        for(int i = 0; i < 200; i++)
         {
             WeatherForecast weather = new()
             {
@@ -67,14 +83,17 @@ public class WeatherGenerator : IHostedService
                 City = GenerateCity(),
                 Date = GenerateDate()
             };
-            await _handler.Handl(weather);
+            chunk.Add(weather);
         }
+        Temperature t = new()
+        {
+            TemperatureC = 0,
+        };
+        await _handler.HandlChunk(chunk, t);
     }
 
     private int GenerateTemperature()
     {
-        
-        ;
         return rnd.Next(1, 35);
     }
 

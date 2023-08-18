@@ -12,8 +12,13 @@ public class PlusMongoRepository : IPlusRepository<string>
         var mongoDatabse = mongoClient.GetDatabase(weatherDatabaseSettings.Value.DatabaseName);
         _plusTemperatureCollection = mongoDatabse.GetCollection<Entity<string>>(weatherDatabaseSettings.Value.PlusTemperatureCollectionName);
     }
-    public async Task CreateAsync(Entity<string> entity)
+    public async Task AddAsync(Entity<string> entity)
     {
         await _plusTemperatureCollection.InsertOneAsync(entity);
+    }
+
+    public async Task AddChunkAsync(IList<Entity<string>> entities)
+    {
+        await _plusTemperatureCollection.InsertManyAsync(entities);
     }
 }
