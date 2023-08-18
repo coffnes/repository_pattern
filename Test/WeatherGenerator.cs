@@ -1,10 +1,8 @@
-using MongoDB.Driver;
-using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Hosting;
-using MongoDB.Bson;
 using RepoTask.DataAccessLayer;
+using RepoTask.BusinessLogicLayer;
 
-namespace RepoTask.BusinessLogicLayer;
+namespace RepoTask.Test;
 
 public class WeatherGenerator : IHostedService
 {
