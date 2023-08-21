@@ -1,6 +1,6 @@
 using RepoTask.DataAccessLayer;
 
-namespace RepoTask.BusinessLogicLayer.Repositories;
+namespace RepoTask.DataAccessLayer.Repositories;
 
 public interface IMinusRepository<T> : IMongoRepository<T>
 {

@@ -1,9 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using RepoTask.BusinessLogicLayer;
 using RepoTask.DataAccessLayer;
-using Microsoft.Extensions.Options;
-using MongoDB.Driver;
-using MongoDB.Bson;
 
 namespace RepoTask.Controllers;
 

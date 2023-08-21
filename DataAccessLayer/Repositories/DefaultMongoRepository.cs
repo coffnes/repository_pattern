@@ -2,7 +2,7 @@ using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using RepoTask.DataAccessLayer;
 
-namespace RepoTask.BusinessLogicLayer.Repositories;
+namespace RepoTask.DataAccessLayer.Repositories;
 
 public class DefaultMongoRepository : IDefaultRepository<string>
 {

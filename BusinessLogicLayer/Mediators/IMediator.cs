@@ -1,4 +1,4 @@
-using RepoTask.BusinessLogicLayer.Repositories;
+using RepoTask.DataAccessLayer.Repositories;
 using RepoTask.BusinessLogicLayer.Strategies;
 
 namespace RepoTask.BusinessLogicLayer.Mediators;
