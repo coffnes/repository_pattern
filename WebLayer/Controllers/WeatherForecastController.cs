@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using RepoTask.BusinessLogicLayer;
 using RepoTask.DataAccessLayer;
+using RepoTask.DataAccessLayer.Repositories;
 
 namespace RepoTask.Controllers;
 
@@ -15,36 +16,36 @@ public class WeatherForecastController : ControllerBase
 
     private readonly ILogger<WeatherForecastController> _logger;
     private readonly WeatherHandler _handler;
-    private readonly WeatherDataAccessor _weatherDataAccessor;
-    public WeatherForecastController(ILogger<WeatherForecastController> logger, WeatherHandler handler, WeatherDataAccessor weatherDataAccessor)
+    private readonly MongoRepositoryManager _repoManager;
+    public WeatherForecastController(ILogger<WeatherForecastController> logger, WeatherHandler handler, MongoRepositoryManager repoManager)
     {
         _logger = logger;
         _handler = handler;
-        _weatherDataAccessor = weatherDataAccessor;
+        _repoManager = repoManager;
     }
 
     [HttpGet(Name = "GetWeatherForecast")]
-    public IEnumerable<WeatherForecast> Get()
+    public IEnumerable<TemperatureEntity<string>> Get()
     {
-        return _weatherDataAccessor.GetAll();
+        return _repoManager.GetAll();
     }
 
     [HttpGet("city/{city?}")]
-    public IList<WeatherForecast> GetByCity(string? city)
+    public IList<TemperatureEntity<string>> GetByCity(string? city)
     {
-        return _weatherDataAccessor.GetByCity(city);
+        return _repoManager.GetByCity(city);
     }
 
     [HttpGet("date/{dateFrom}-{dateTo}")]
-    public IList<WeatherForecast> GetByDate(DateOnly dateFrom, DateOnly dateTo)
+    public IList<TemperatureEntity<string>> GetByDate(DateOnly dateFrom, DateOnly dateTo)
     {
-        return _weatherDataAccessor.GetByDate(dateFrom, dateTo);
+        return _repoManager.GetByDate(dateFrom, dateTo);
     }
 
     [HttpGet("zero")]
-    public IList<WeatherForecast> GetOnlyZeroTemperature()
+    public IList<TemperatureEntity<string>> GetOnlyZeroTemperature()
     {
-        return _weatherDataAccessor.GetOnlyZeroTemperature();
+        return _repoManager.GetOnlyZeroTemperature();
     }
 
     [HttpPost]
