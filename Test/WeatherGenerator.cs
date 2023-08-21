@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Hosting;
 using RepoTask.DataAccessLayer;
+using RepoTask.DataAccessLayer.Repositories;
 using RepoTask.BusinessLogicLayer;
 
 namespace RepoTask.Test;
@@ -8,18 +9,18 @@ public class WeatherGenerator : IHostedService
 {
     private readonly WeatherHandler _handler;
     private readonly Random rnd;
-    private readonly WeatherDataAccessor _weatherDataAccessor;
+    private readonly MongoRepositoryManager _manager;
 
-    public WeatherGenerator(WeatherHandler handler, WeatherDataAccessor weatherDataAccessor)
+    public WeatherGenerator(WeatherHandler handler, MongoRepositoryManager manager)
     {
-        _weatherDataAccessor = weatherDataAccessor;
+        _manager = manager;
         _handler = handler;
         rnd = new();
     }
 
     public async Task Delete()
     {
-        await _weatherDataAccessor.DeleteAll();
+        await _manager.DeleteAll();
     }
 
     public async Task Generate()
@@ -34,7 +35,7 @@ public class WeatherGenerator : IHostedService
 
     public async Task GeneratePlusTemperatures()
     {
-        List<Entity<string>> chunk = new();
+        List<TemperatureEntity<string>> chunk = new();
         for(int i = 0; i < 250; i++)
         {
             WeatherForecast weather = new()
@@ -53,7 +54,7 @@ public class WeatherGenerator : IHostedService
     }
     public async Task GenerateMinusTemperatures()
     {
-        List<Entity<string>> chunk = new();
+        List<TemperatureEntity<string>> chunk = new();
         for(int i = 0; i < 250; i++)
         {
             WeatherForecast weather = new()
@@ -72,7 +73,7 @@ public class WeatherGenerator : IHostedService
     }
     public async Task GenerateZeroTemperatures()
     {
-        List<Entity<string>> chunk = new();
+        List<TemperatureEntity<string>> chunk = new();
         for(int i = 0; i < 250; i++)
         {
             WeatherForecast weather = new()

@@ -20,7 +20,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddTransient<WeatherHandler>();
 
-builder.Services.AddHostedService((provider) => new WeatherGenerator(provider.GetRequiredService<WeatherHandler>(), provider.GetRequiredService<WeatherDataAccessor>()));
+builder.Services.AddHostedService((provider) => new WeatherGenerator(provider.GetRequiredService<WeatherHandler>(), provider.GetRequiredService<MongoRepositoryManager>()));
 
 builder.Services.AddTransient<IStrategy<Temperature>, MinusTemperatureStrategy>();
 builder.Services.AddTransient<IStrategy<Temperature>, PlusTemperatureStrategy>();
@@ -29,13 +29,18 @@ builder.Services.AddTransient<IStrategyManager<Temperature>, TemperatureStrategy
 
 builder.Services.AddTransient<IMediator<string, Temperature>, MinusMediator>();
 builder.Services.AddTransient<IMediator<string, Temperature>, PlusMediator>();
+builder.Services.AddTransient<IMediator<string, Temperature>, DefaultMediator>();
 builder.Services.AddTransient<IMediatorManager<string, Temperature>, TemperatureMediatorManager>();
+
+builder.Services.AddTransient<IMongoRepository<string>, MinusMongoRepository>();
+builder.Services.AddTransient<IMongoRepository<string>, PlusMongoRepository>();
+builder.Services.AddTransient<IMongoRepository<string>, DefaultMongoRepository>();
 
 builder.Services.AddTransient<IMinusRepository<string>, MinusMongoRepository>();
 builder.Services.AddTransient<IPlusRepository<string>, PlusMongoRepository>();
 builder.Services.AddTransient<IDefaultRepository<string>, DefaultMongoRepository>();
 
-builder.Services.AddTransient<WeatherDataAccessor>();
+builder.Services.AddTransient<MongoRepositoryManager>();
 
 var app = builder.Build();
 
