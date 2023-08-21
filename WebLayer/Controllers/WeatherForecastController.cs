@@ -1,9 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using RepoTask.BusinessLogicLayer;
 using RepoTask.DataAccessLayer;
-using Microsoft.Extensions.Options;
-using MongoDB.Driver;
-using MongoDB.Bson;
 
 namespace RepoTask.Controllers;
 
@@ -35,14 +32,12 @@ public class WeatherForecastController : ControllerBase
     [HttpGet("city/{city?}")]
     public IList<WeatherForecast> GetByCity(string? city)
     {
-        //Получить коллекцию объединением 3 коллекций
         return _weatherDataAccessor.GetByCity(city);
     }
 
     [HttpGet("date/{dateFrom}-{dateTo}")]
     public IList<WeatherForecast> GetByDate(DateOnly dateFrom, DateOnly dateTo)
     {
-        
         return _weatherDataAccessor.GetByDate(dateFrom, dateTo);
     }
 

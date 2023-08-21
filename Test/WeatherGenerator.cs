@@ -1,10 +1,8 @@
-using MongoDB.Driver;
-using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Hosting;
-using MongoDB.Bson;
 using RepoTask.DataAccessLayer;
+using RepoTask.BusinessLogicLayer;
 
-namespace RepoTask.BusinessLogicLayer;
+namespace RepoTask.Test;
 
 public class WeatherGenerator : IHostedService
 {
@@ -26,14 +24,18 @@ public class WeatherGenerator : IHostedService
 
     public async Task Generate()
     {
-        await GeneratePlusTemperatures();
-        await GenerateMinusTemperatures();
-        await GenerateZeroTemperatures();
+        for(int i = 0; i < 40; i++)
+        {
+            await GeneratePlusTemperatures();
+            await GenerateMinusTemperatures();
+            await GenerateZeroTemperatures();
+        }
     }
 
     public async Task GeneratePlusTemperatures()
     {
-        for(int i = 0; i < 100; i++)
+        List<Entity<string>> chunk = new();
+        for(int i = 0; i < 250; i++)
         {
             WeatherForecast weather = new()
             {
@@ -41,12 +43,18 @@ public class WeatherGenerator : IHostedService
                 City = GenerateCity(),
                 Date = GenerateDate()
             };
-            await _handler.Handl(weather);
+            chunk.Add(weather);
         }
+        Temperature t = new()
+        {
+            TemperatureC = 1,
+        };
+        await _handler.HandlChunk(chunk, t);
     }
     public async Task GenerateMinusTemperatures()
     {
-        for(int i = 0; i < 100; i++)
+        List<Entity<string>> chunk = new();
+        for(int i = 0; i < 250; i++)
         {
             WeatherForecast weather = new()
             {
@@ -54,12 +62,18 @@ public class WeatherGenerator : IHostedService
                 City = GenerateCity(),
                 Date = GenerateDate()
             };
-            await _handler.Handl(weather);
+            chunk.Add(weather);
         }
+        Temperature t = new()
+        {
+            TemperatureC = -1,
+        };
+        await _handler.HandlChunk(chunk, t);
     }
     public async Task GenerateZeroTemperatures()
     {
-        for(int i = 0; i < 100; i++)
+        List<Entity<string>> chunk = new();
+        for(int i = 0; i < 250; i++)
         {
             WeatherForecast weather = new()
             {
@@ -67,14 +81,17 @@ public class WeatherGenerator : IHostedService
                 City = GenerateCity(),
                 Date = GenerateDate()
             };
-            await _handler.Handl(weather);
+            chunk.Add(weather);
         }
+        Temperature t = new()
+        {
+            TemperatureC = 0,
+        };
+        await _handler.HandlChunk(chunk, t);
     }
 
     private int GenerateTemperature()
     {
-        
-        ;
         return rnd.Next(1, 35);
     }
 
@@ -86,8 +103,8 @@ public class WeatherGenerator : IHostedService
 
     private DateOnly GenerateDate()
     {
-        DateTime start = new DateTime(2023, 8, 1);
-        DateTime stop = new DateTime(2023, 8, 31);
+        DateTime start = new(2023, 8, 1);
+        DateTime stop = new(2023, 8, 31);
         int range = (stop - start).Days;
         return DateOnly.FromDateTime(start.AddDays(rnd.Next(range)));
     }

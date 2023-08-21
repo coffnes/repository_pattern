@@ -2,7 +2,7 @@ using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using RepoTask.DataAccessLayer;
 
-namespace RepoTask.BusinessLogicLayer.Repositories;
+namespace RepoTask.DataAccessLayer.Repositories;
 
 public class DefaultMongoRepository : IDefaultRepository<string>
 {
@@ -12,8 +12,13 @@ public class DefaultMongoRepository : IDefaultRepository<string>
         var mongoDatabse = mongoClient.GetDatabase(weatherDatabaseSettings.Value.DatabaseName);
         _zeroTemperatureCollection = mongoDatabse.GetCollection<Entity<string>>(weatherDatabaseSettings.Value.ZeroTemperatureCollectionName);
     }
-    public async Task CreateAsync(Entity<string> entity)
+    public async Task AddAsync(Entity<string> entity)
     {
         await _zeroTemperatureCollection.InsertOneAsync(entity);
+    }
+
+    public async Task AddChunkAsync(IList<Entity<string>> entities)
+    {
+        await _zeroTemperatureCollection.InsertManyAsync(entities);
     }
 }

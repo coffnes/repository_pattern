@@ -19,6 +19,12 @@ public class WeatherHandler
             TemperatureC = weatherForecast.TemperatureC
         };
         var repo = _manager.GetCurrentRepository(t);
-        return repo.CreateAsync(weatherForecast);
+        return repo.AddAsync(weatherForecast);
+    }
+
+    public Task HandlChunk(IList<Entity<string>> weathers, Temperature t)
+    {
+        var repo = _manager.GetCurrentRepository(t);
+        return repo.AddChunkAsync(weathers);
     }
 }
