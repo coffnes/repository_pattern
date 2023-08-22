@@ -7,10 +7,10 @@ namespace RepoTask.DataAccessLayer.Repositories;
 public class MinusMongoRepository : IMinusRepository<string>
 {
     private readonly IMongoCollection<TemperatureEntity<string>> _minusTemperatureCollection;
-    public MinusMongoRepository(MongoClient mongoClient, IOptions<WeatherDatabaseSettings> weatherDatabaseSettings)
+    public MinusMongoRepository(MinusMongoClient mongoClient, IOptions<MinusMongoDatabaseSettings> databaseSettings)
     {
-        var mongoDatabse = mongoClient.GetDatabase(weatherDatabaseSettings.Value.DatabaseName);
-        _minusTemperatureCollection = mongoDatabse.GetCollection<TemperatureEntity<string>>(weatherDatabaseSettings.Value.MinusTemperatureCollectionName);
+        var mongoDatabase = mongoClient.MongoClient.GetDatabase(databaseSettings.Value.DatabaseName);
+        _minusTemperatureCollection = mongoDatabase.GetCollection<TemperatureEntity<string>>(databaseSettings.Value.MinusTemperatureCollectionName);
     }
     public async Task AddAsync(TemperatureEntity<string> entity)
     {

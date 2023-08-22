@@ -1,5 +1,4 @@
 using Microsoft.Extensions.Options;
-using MongoDB.Driver;
 using RepoTask.DataAccessLayer;
 using RepoTask.BusinessLogicLayer.Mediators;
 using RepoTask.DataAccessLayer.Repositories;
@@ -14,7 +13,9 @@ builder.Services.Configure<WeatherDatabaseSettings>(builder.Configuration.GetSec
 builder.Services.Configure<PlusMongoDatabaseSettings>(builder.Configuration.GetSection("PlusMongoDatabase"));
 builder.Services.Configure<MinusMongoDatabaseSettings>(builder.Configuration.GetSection("MinusMongoDatabase"));
 builder.Services.Configure<ZeroMongoDatabaseSettings>(builder.Configuration.GetSection("ZeroMongoDatabase"));
-builder.Services.AddSingleton((provider) => new MongoClient(provider.GetRequiredService<IOptions<WeatherDatabaseSettings>>().Value.ConnectionString));
+builder.Services.AddSingleton((provider) => new MinusMongoClient(provider.GetRequiredService<IOptions<MinusMongoDatabaseSettings>>()));
+builder.Services.AddSingleton((provider) => new PlusMongoClient(provider.GetRequiredService<IOptions<PlusMongoDatabaseSettings>>()));
+builder.Services.AddSingleton((provider) => new ZeroMongoClient(provider.GetRequiredService<IOptions<ZeroMongoDatabaseSettings>>()));
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
