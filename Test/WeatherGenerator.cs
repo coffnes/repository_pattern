@@ -23,17 +23,24 @@ public class WeatherGenerator : IHostedService
         await _manager.DeleteAll();
     }
 
-    public async Task Generate()
+    public void Generate()
     {
-        for(int i = 0; i < 40; i++)
+        // for(int i = 0; i < 40; i++)
+        // {
+        //     Thread t = new Thread(new ThreadStart(GeneratePlusTemperatures));
+        //     await GeneratePlusTemperatures();
+        //     await GenerateMinusTemperatures();
+        //     await GenerateZeroTemperatures();
+        // }
+        for(int i = 0; i < -1; i++)
         {
-            await GeneratePlusTemperatures();
-            await GenerateMinusTemperatures();
-            await GenerateZeroTemperatures();
+            ThreadPool.QueueUserWorkItem((state) => GeneratePlusTemperatures());
+            ThreadPool.QueueUserWorkItem((state) => GenerateMinusTemperatures());
+            ThreadPool.QueueUserWorkItem((state) => GenerateZeroTemperatures());
         }
     }
 
-    public async Task GeneratePlusTemperatures()
+    public void GeneratePlusTemperatures()
     {
         List<TemperatureEntity<string>> chunk = new();
         for(int i = 0; i < 250; i++)
@@ -50,9 +57,9 @@ public class WeatherGenerator : IHostedService
         {
             TemperatureC = 1,
         };
-        await _handler.HandlChunk(chunk, t);
+        _handler.HandlChunk(chunk, t);
     }
-    public async Task GenerateMinusTemperatures()
+    public void GenerateMinusTemperatures()
     {
         List<TemperatureEntity<string>> chunk = new();
         for(int i = 0; i < 250; i++)
@@ -69,9 +76,9 @@ public class WeatherGenerator : IHostedService
         {
             TemperatureC = -1,
         };
-        await _handler.HandlChunk(chunk, t);
+        _handler.HandlChunk(chunk, t);
     }
-    public async Task GenerateZeroTemperatures()
+    public void GenerateZeroTemperatures()
     {
         List<TemperatureEntity<string>> chunk = new();
         for(int i = 0; i < 250; i++)
@@ -88,7 +95,7 @@ public class WeatherGenerator : IHostedService
         {
             TemperatureC = 0,
         };
-        await _handler.HandlChunk(chunk, t);
+        _handler.HandlChunk(chunk, t);
     }
 
     private int GenerateTemperature()
@@ -113,7 +120,7 @@ public class WeatherGenerator : IHostedService
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         await Delete();
-        await Generate();
+        Generate();
     }
 
     public async Task StopAsync(CancellationToken cancellationToken)

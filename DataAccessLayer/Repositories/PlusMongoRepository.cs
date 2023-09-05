@@ -7,14 +7,29 @@ namespace RepoTask.DataAccessLayer.Repositories;
 public class PlusMongoRepository : IPlusRepository<string>
 {
     private readonly IMongoCollection<TemperatureEntity<string>> _plusTemperatureCollection;
+    private readonly PlusMongoClient _mongoClient;
     public PlusMongoRepository(PlusMongoClient mongoClient, IOptions<PlusMongoDatabaseSettings> weatherDatabaseSettings)
     {
-        var mongoDatabse = mongoClient.MongoClient.GetDatabase(weatherDatabaseSettings.Value.DatabaseName);
+        _mongoClient = mongoClient;
+        var mongoDatabse = _mongoClient.MongoClient.GetDatabase(weatherDatabaseSettings.Value.DatabaseName);
         _plusTemperatureCollection = mongoDatabse.GetCollection<TemperatureEntity<string>>(weatherDatabaseSettings.Value.PlusTemperatureCollectionName);
     }
     public async Task AddAsync(TemperatureEntity<string> entity)
     {
         await _plusTemperatureCollection.InsertOneAsync(entity);
+        // var session = _mongoClient.MongoClient.StartSession();
+        // session.StartTransaction();
+        // try
+        // {
+        //     await _plusTemperatureCollection.InsertOneAsync(session, entity);
+        //     session.CommitTransaction();
+        // }
+        // catch(Exception e)
+        // {
+        //     //логирование
+        //     Console.WriteLine(e);
+        //     session.AbortTransaction();
+        // }
     }
 
     public async Task AddChunkAsync(IList<TemperatureEntity<string>> entities)

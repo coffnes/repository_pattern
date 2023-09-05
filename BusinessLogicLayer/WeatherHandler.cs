@@ -22,9 +22,9 @@ public class WeatherHandler
         return repo.AddAsync(weatherForecast);
     }
 
-    public Task HandlChunk(IList<TemperatureEntity<string>> weathers, Temperature t)
+    public void HandlChunk(IList<TemperatureEntity<string>> weathers, Temperature t)
     {
         var repo = _manager.GetCurrentRepository(t);
-        return repo.AddChunkAsync(weathers);
+        repo.AddChunkAsync(weathers);
     }
 }
