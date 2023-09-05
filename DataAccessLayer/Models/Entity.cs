@@ -1,6 +1,10 @@
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+
 namespace RepoTask.DataAccessLayer;
 
 public abstract class Entity<T>
 {
-    public T Id { get; set; }
+    [BsonId]
+    public ObjectId Id { get; set; }
 }

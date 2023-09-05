@@ -14,12 +14,10 @@ public class WeatherForecastController : ControllerBase
         "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
     };
 
-    private readonly ILogger<WeatherForecastController> _logger;
     private readonly WeatherHandler _handler;
     private readonly MongoRepositoryManager _repoManager;
-    public WeatherForecastController(ILogger<WeatherForecastController> logger, WeatherHandler handler, MongoRepositoryManager repoManager)
+    public WeatherForecastController(WeatherHandler handler, MongoRepositoryManager repoManager)
     {
-        _logger = logger;
         _handler = handler;
         _repoManager = repoManager;
     }
@@ -49,8 +47,8 @@ public class WeatherForecastController : ControllerBase
     }
 
     [HttpPost]
-    public void Post(WeatherForecast weatherForecast)
+    public async void Post(WeatherForecast weatherForecast)
     {
-        _handler.Handl(weatherForecast);
+        await _handler.Handl(weatherForecast);
     }
 }

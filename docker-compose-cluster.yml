@@ -1,0 +1,52 @@
+version: '1'
+services:
+  plus_mongo:
+    hostname: plus_mongo
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    restart: always
+    command: mongod --replSet temperature-mongo-set
+  minus_mongo:
+    hostname: minus_mongo
+    image: mongo:latest
+    ports:
+      - "27018:27017"
+    restart: always
+    command: mongod --replSet temperature-mongo-set
+  zero_mongo:
+    hostname: zero_mongo
+    image: mongo:latest
+    ports:
+      - "27019:27017"
+    restart: always
+    command: mongod --replSet temperature-mongo-set
+  mongoinit:
+    image: mongo:latest
+    restart: "no"
+    depends_on:
+      - plus_mongo
+      - minus_mongo
+      - zero_mongo
+    command: >
+      mongo --host plus_mongo:27017 --eval 
+      '
+      config = {
+      "_id" : "temperature-mongo-set",
+      "members" : [
+        {
+          "_id" : 0,
+          "host" : "plus_mongo:27017"
+        },
+        {
+          "_id" : 1,
+          "host" : "minus_mongo:27017"
+        },
+        {
+          "_id" : 2,
+          "host" : "zero_mongo:27017"
+        }
+      ]
+      };
+      rs.initiate(config);
+      '

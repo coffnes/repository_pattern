@@ -4,7 +4,6 @@ using RepoTask.BusinessLogicLayer.Mediators;
 using RepoTask.DataAccessLayer.Repositories;
 using RepoTask.BusinessLogicLayer.Strategies;
 using RepoTask.BusinessLogicLayer;
-using RepoTask.Test;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,7 +23,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddTransient<WeatherHandler>();
 
-builder.Services.AddHostedService((provider) => new WeatherGenerator(provider.GetRequiredService<WeatherHandler>(), provider.GetRequiredService<MongoRepositoryManager>()));
+//builder.Services.AddHostedService((provider) => new WeatherGenerator(provider.GetRequiredService<WeatherHandler>(), provider.GetRequiredService<MongoRepositoryManager>()));
 
 builder.Services.AddTransient<IStrategy<Temperature>, MinusTemperatureStrategy>();
 builder.Services.AddTransient<IStrategy<Temperature>, PlusTemperatureStrategy>();
