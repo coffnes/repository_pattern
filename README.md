@@ -1,4 +1,4 @@
-# repository_pattern
+# Repository Pattern
 My implementation of repository pattern in ASP.NET Core WebApi
 
 ### Todo
