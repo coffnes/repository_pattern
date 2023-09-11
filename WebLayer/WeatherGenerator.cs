@@ -3,7 +3,7 @@ using RepoTask.DataAccessLayer;
 using RepoTask.DataAccessLayer.Repositories;
 using RepoTask.BusinessLogicLayer;
 
-namespace RepoTask.Test;
+namespace RepoTask.WebLayer;
 
 public class WeatherGenerator : IHostedService
 {
@@ -25,14 +25,7 @@ public class WeatherGenerator : IHostedService
 
     public void Generate()
     {
-        // for(int i = 0; i < 40; i++)
-        // {
-        //     Thread t = new Thread(new ThreadStart(GeneratePlusTemperatures));
-        //     await GeneratePlusTemperatures();
-        //     await GenerateMinusTemperatures();
-        //     await GenerateZeroTemperatures();
-        // }
-        for(int i = 0; i < -1; i++)
+        for(int i = 0; i < 1; i++)
         {
             ThreadPool.QueueUserWorkItem((state) => GeneratePlusTemperatures());
             ThreadPool.QueueUserWorkItem((state) => GenerateMinusTemperatures());

@@ -4,8 +4,21 @@ using RepoTask.BusinessLogicLayer.Mediators;
 using RepoTask.DataAccessLayer.Repositories;
 using RepoTask.BusinessLogicLayer.Strategies;
 using RepoTask.BusinessLogicLayer;
+using RepoTask.WebLayer;
+using VueCliMiddleware;
+using Microsoft.AspNetCore.SpaServices;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(
+    name: "_myAllowSpecificOrigins",
+    builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()
+    );
+});
+
+builder.Services.AddSpaStaticFiles(configuration => configuration.RootPath = "../ClientApp/dist");
 
 // Add services to the container.
 builder.Services.Configure<WeatherDatabaseSettings>(builder.Configuration.GetSection("WeatherDatabase"));
@@ -23,7 +36,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddTransient<WeatherHandler>();
 
-//builder.Services.AddHostedService((provider) => new WeatherGenerator(provider.GetRequiredService<WeatherHandler>(), provider.GetRequiredService<MongoRepositoryManager>()));
+builder.Services.AddHostedService((provider) => new WeatherGenerator(provider.GetRequiredService<WeatherHandler>(), provider.GetRequiredService<MongoRepositoryManager>()));
 
 builder.Services.AddTransient<IStrategy<Temperature>, MinusTemperatureStrategy>();
 builder.Services.AddTransient<IStrategy<Temperature>, PlusTemperatureStrategy>();
@@ -49,17 +62,29 @@ var app = builder.Build();
 
 // app.Services.GetRequiredService<Microsoft.AspNetCore.Hosting.IApplicationLifetime>()
 //     .ApplicationStarted.Register(app.Services.GetRequiredService<WeatherGenerator>().Generate);
-
+app.UseCors("_myAllowSpecificOrigins");
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseSpaStaticFiles();
 
+if (app.Environment.IsDevelopment())
+{
+  app.MapToVueCliProxy(
+      "{*path}",
+      new SpaOptions { SourcePath = "../ClientApp" },
+      npmScript: "dev",
+      regex: "Compiled successfully!");
+}
+
+//app.UseHttpsRedirection();
 app.UseAuthorization();
+app.UseSpa(spa => spa.Options.SourcePath = "../ClientApp");
+
+app.MapFallbackToFile("index.html");
 
 app.MapControllers();
 

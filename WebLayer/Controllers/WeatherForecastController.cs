@@ -22,7 +22,7 @@ public class WeatherForecastController : ControllerBase
         _repoManager = repoManager;
     }
 
-    [HttpGet(Name = "GetWeatherForecast")]
+    [HttpGet]
     public IEnumerable<TemperatureEntity<string>> Get()
     {
         return _repoManager.GetAll();
