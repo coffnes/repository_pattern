@@ -1,20 +1,23 @@
-import { createApp } from 'vue'
-import './style.css'
-import App from './App.vue'
-import router from '@/router/router'
+import { createApp } from 'vue';
+import './style.css';
 
 // Vuetify
-import 'vuetify/styles'
-import { createVuetify } from 'vuetify'
-import * as vue_components from 'vuetify/components'
-import * as directives from 'vuetify/directives'
+import 'vuetify/styles';
+import { createVuetify } from 'vuetify';
+import * as VueComponents from 'vuetify/components';
+import * as directives from 'vuetify/directives';
 
-import VueDatePicker from '@vuepic/vue-datepicker'
-import '@vuepic/vue-datepicker/dist/main.css'
+// Date Picker
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css';
+
+import router from '@/router/router';
+import App from './App.vue';
 
 const vuetify = createVuetify({
-    components: vue_components,
-    directives,
-  });
+  components: VueComponents,
+  directives,
+});
 
-createApp(App).use(router).use(vuetify).component('date-picker', VueDatePicker).mount('#app')
+createApp(App).use(router).use(vuetify).component('date-picker', VueDatePicker)
+  .mount('#app');
