@@ -104,8 +104,8 @@ public class WeatherGenerator : IHostedService
 
     private DateOnly GenerateDate()
     {
-        DateTime start = new(2023, 8, 1);
-        DateTime stop = new(2023, 8, 31);
+        DateTime start = new(2023, 9, 1);
+        DateTime stop = new(2023, 9, 30);
         int range = (stop - start).Days;
         return DateOnly.FromDateTime(start.AddDays(rnd.Next(range)));
     }

@@ -51,7 +51,7 @@ public class PlusMongoRepository : IPlusRepository<string>
     {
         var filter = Builders<TemperatureEntity<string>>
             .Filter
-            .And(Builders<TemperatureEntity<string>>.Filter.Gt(m => m.Date, dateFrom), Builders<TemperatureEntity<string>>.Filter.Lt(m => m.Date, dateTo));
+            .And(Builders<TemperatureEntity<string>>.Filter.Gte(m => m.Date, dateFrom), Builders<TemperatureEntity<string>>.Filter.Lte(m => m.Date, dateTo));
         var result = _plusTemperatureCollection.Aggregate()
             .Match(filter)
             .ToList();
