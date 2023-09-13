@@ -4,8 +4,19 @@ using RepoTask.BusinessLogicLayer.Mediators;
 using RepoTask.DataAccessLayer.Repositories;
 using RepoTask.BusinessLogicLayer.Strategies;
 using RepoTask.BusinessLogicLayer;
+using RepoTask.WebLayer;
+using VueCliMiddleware;
+using Microsoft.AspNetCore.SpaServices;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(
+    name: "_myAllowSpecificOrigins",
+    builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()
+    );
+});
 
 // Add services to the container.
 builder.Services.Configure<WeatherDatabaseSettings>(builder.Configuration.GetSection("WeatherDatabase"));
@@ -23,7 +34,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddTransient<WeatherHandler>();
 
-//builder.Services.AddHostedService((provider) => new WeatherGenerator(provider.GetRequiredService<WeatherHandler>(), provider.GetRequiredService<MongoRepositoryManager>()));
+builder.Services.AddHostedService((provider) => new WeatherGenerator(provider.GetRequiredService<WeatherHandler>(), provider.GetRequiredService<MongoRepositoryManager>()));
 
 builder.Services.AddTransient<IStrategy<Temperature>, MinusTemperatureStrategy>();
 builder.Services.AddTransient<IStrategy<Temperature>, PlusTemperatureStrategy>();
@@ -49,15 +60,32 @@ var app = builder.Build();
 
 // app.Services.GetRequiredService<Microsoft.AspNetCore.Hosting.IApplicationLifetime>()
 //     .ApplicationStarted.Register(app.Services.GetRequiredService<WeatherGenerator>().Generate);
-
+app.UseCors("_myAllowSpecificOrigins");
 // Configure the HTTP request pipeline.
+
+//app.UseHttpsRedirection();
+app.UseAuthorization();
+
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+  app.MapToVueCliProxy(
+      "{*path}",
+      new SpaOptions { SourcePath = "ClientApp" },
+      npmScript: "dev",
+      port: 3399,
+      regex: "Compiled successfully!",
+      forceKill: true,
+      wsl: true);
 }
 
-app.UseHttpsRedirection();
+if(app.Environment.IsDevelopment()) {
+    app.MapWhen(y => y.Request.Path.StartsWithSegments("/app"), client => {
+        client.UseSpa(spa =>
+            {
+                spa.UseProxyToSpaDevelopmentServer("http://localhost:3399");
+            });
+    });
+}
 
 app.UseAuthorization();
 

@@ -22,7 +22,6 @@
   <ItemGroup>
     <ProjectReference Include="..\DataAccessLayer\DataAccessLayer.csproj" />
     <ProjectReference Include="..\BusinessLogicLayer\BusinessLogicLayer.csproj" />
-    <ProjectReference Include="..\WebLayer\WebLayer.csproj" />
   </ItemGroup>
 
 </Project>
