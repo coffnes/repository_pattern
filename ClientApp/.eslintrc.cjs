@@ -39,7 +39,7 @@ module.exports = {
     'import/resolver': {
       alias: {
         map: [
-          ['@', '/home/artem/Documents/Educational/repository_pattern/ClientApp/s qrc'],
+          ['@', '/home/artem/Documents/Educational/repository_pattern/ClientApp/src'],
         ],
         extentions: ['.js', '.vue'],
       },

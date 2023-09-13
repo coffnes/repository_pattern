@@ -18,8 +18,6 @@ builder.Services.AddCors(options =>
     );
 });
 
-builder.Services.AddSpaStaticFiles(configuration => configuration.RootPath = "../ClientApp/dist");
-
 // Add services to the container.
 builder.Services.Configure<WeatherDatabaseSettings>(builder.Configuration.GetSection("WeatherDatabase"));
 builder.Services.Configure<PlusMongoDatabaseSettings>(builder.Configuration.GetSection("PlusMongoDatabase"));
@@ -64,27 +62,32 @@ var app = builder.Build();
 //     .ApplicationStarted.Register(app.Services.GetRequiredService<WeatherGenerator>().Generate);
 app.UseCors("_myAllowSpecificOrigins");
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-}
 
-app.UseStaticFiles();
-app.UseSpaStaticFiles();
+//app.UseHttpsRedirection();
+app.UseAuthorization();
 
 if (app.Environment.IsDevelopment())
 {
   app.MapToVueCliProxy(
       "{*path}",
-      new SpaOptions { SourcePath = "../ClientApp" },
+      new SpaOptions { SourcePath = "ClientApp" },
       npmScript: "dev",
-      regex: "Compiled successfully!");
+      port: 3399,
+      regex: "Compiled successfully!",
+      forceKill: true,
+      wsl: true);
 }
 
-//app.UseHttpsRedirection();
-app.UseAuthorization();
-app.UseSpa(spa => spa.Options.SourcePath = "../ClientApp");
+if(app.Environment.IsDevelopment()) {
+    app.MapWhen(y => y.Request.Path.StartsWithSegments("/app"), client => {
+        client.UseSpa(spa =>
+            {
+                spa.UseProxyToSpaDevelopmentServer("http://localhost:3399");
+            });
+    });
+}
 
-app.MapFallbackToFile("index.html");
+app.UseAuthorization();
 
 app.MapControllers();
 

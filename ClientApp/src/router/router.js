@@ -5,15 +5,15 @@ import WeatherChart from '@/pages/WeatherChart.vue';
 
 const routes = [
   {
-    path: '/',
+    path: '/app',
     component: MainPage,
   },
   {
-    path: '/weather',
+    path: '/app/weather',
     component: WeatherListPage,
   },
   {
-    path: '/chart',
+    path: '/app/chart',
     component: WeatherChart,
   },
 ];

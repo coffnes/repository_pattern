@@ -10,7 +10,9 @@ export default defineConfig({
       { find: '@', replacement: fileURLToPath(new URL('./src', import.meta.url)) },
     ],
   },
+  base: '/app',
   server: {
+    port: 3399,
     proxy: {
       '^/weatherforecast.*': {
         target: 'http://localhost:5154',

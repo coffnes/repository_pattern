@@ -40,7 +40,8 @@
 
 <script>
 import axios from 'axios';
-import WeatherList from '@/components/WeatherList.vue'
+import WeatherList from '@/components/WeatherList.vue';
+
 export default {
   components: { 'weather-list': WeatherList },
   data() {
