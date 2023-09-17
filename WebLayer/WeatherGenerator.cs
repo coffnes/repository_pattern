@@ -1,39 +1,42 @@
-using MongoDB.Driver;
-using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Hosting;
-using MongoDB.Bson;
 using RepoTask.DataAccessLayer;
+using RepoTask.DataAccessLayer.Repositories;
+using RepoTask.BusinessLogicLayer;
 
-namespace RepoTask.BusinessLogicLayer;
+namespace RepoTask.WebLayer;
 
 public class WeatherGenerator : IHostedService
 {
     private readonly WeatherHandler _handler;
     private readonly Random rnd;
-    private readonly WeatherDataAccessor _weatherDataAccessor;
+    private readonly MongoRepositoryManager _manager;
 
-    public WeatherGenerator(WeatherHandler handler, WeatherDataAccessor weatherDataAccessor)
+    public WeatherGenerator(WeatherHandler handler, MongoRepositoryManager manager)
     {
-        _weatherDataAccessor = weatherDataAccessor;
+        _manager = manager;
         _handler = handler;
         rnd = new();
     }
 
     public async Task Delete()
     {
-        await _weatherDataAccessor.DeleteAll();
+        await _manager.DeleteAll();
     }
 
-    public async Task Generate()
+    public void Generate()
     {
-        await GeneratePlusTemperatures();
-        await GenerateMinusTemperatures();
-        await GenerateZeroTemperatures();
+        for(int i = 0; i < 1; i++)
+        {
+            ThreadPool.QueueUserWorkItem((state) => GeneratePlusTemperatures());
+            ThreadPool.QueueUserWorkItem((state) => GenerateMinusTemperatures());
+            ThreadPool.QueueUserWorkItem((state) => GenerateZeroTemperatures());
+        }
     }
 
-    public async Task GeneratePlusTemperatures()
+    public void GeneratePlusTemperatures()
     {
-        for(int i = 0; i < 100; i++)
+        List<TemperatureEntity<string>> chunk = new();
+        for(int i = 0; i < 250; i++)
         {
             WeatherForecast weather = new()
             {
@@ -41,12 +44,18 @@ public class WeatherGenerator : IHostedService
                 City = GenerateCity(),
                 Date = GenerateDate()
             };
-            await _handler.Handl(weather);
+            chunk.Add(weather);
         }
+        Temperature t = new()
+        {
+            TemperatureC = 1,
+        };
+        _handler.HandlChunk(chunk, t);
     }
-    public async Task GenerateMinusTemperatures()
+    public void GenerateMinusTemperatures()
     {
-        for(int i = 0; i < 100; i++)
+        List<TemperatureEntity<string>> chunk = new();
+        for(int i = 0; i < 250; i++)
         {
             WeatherForecast weather = new()
             {
@@ -54,12 +63,18 @@ public class WeatherGenerator : IHostedService
                 City = GenerateCity(),
                 Date = GenerateDate()
             };
-            await _handler.Handl(weather);
+            chunk.Add(weather);
         }
+        Temperature t = new()
+        {
+            TemperatureC = -1,
+        };
+        _handler.HandlChunk(chunk, t);
     }
-    public async Task GenerateZeroTemperatures()
+    public void GenerateZeroTemperatures()
     {
-        for(int i = 0; i < 100; i++)
+        List<TemperatureEntity<string>> chunk = new();
+        for(int i = 0; i < 250; i++)
         {
             WeatherForecast weather = new()
             {
@@ -67,14 +82,17 @@ public class WeatherGenerator : IHostedService
                 City = GenerateCity(),
                 Date = GenerateDate()
             };
-            await _handler.Handl(weather);
+            chunk.Add(weather);
         }
+        Temperature t = new()
+        {
+            TemperatureC = 0,
+        };
+        _handler.HandlChunk(chunk, t);
     }
 
     private int GenerateTemperature()
     {
-        
-        ;
         return rnd.Next(1, 35);
     }
 
@@ -86,8 +104,8 @@ public class WeatherGenerator : IHostedService
 
     private DateOnly GenerateDate()
     {
-        DateTime start = new DateTime(2023, 8, 1);
-        DateTime stop = new DateTime(2023, 8, 31);
+        DateTime start = new(2023, 9, 1);
+        DateTime stop = new(2023, 9, 30);
         int range = (stop - start).Days;
         return DateOnly.FromDateTime(start.AddDays(rnd.Next(range)));
     }
@@ -95,7 +113,7 @@ public class WeatherGenerator : IHostedService
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         await Delete();
-        await Generate();
+        Generate();
     }
 
     public async Task StopAsync(CancellationToken cancellationToken)

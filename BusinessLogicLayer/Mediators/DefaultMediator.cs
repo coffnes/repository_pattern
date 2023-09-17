@@ -4,11 +4,11 @@ using RepoTask.BusinessLogicLayer.Strategies;
 
 namespace RepoTask.BusinessLogicLayer.Mediators;
 
-public class MinusMediator : IMediator<string, Temperature>
+public class DefaultMediator : IMediator<string, Temperature>
 {
-    private readonly IMinusRepository<string> _repository;
+    private readonly IDefaultRepository<string> _repository;
 
-    public MinusMediator(IMinusRepository<string> repository)
+    public DefaultMediator(IDefaultRepository<string> repository)
     {
         _repository = repository;
     }
@@ -20,6 +20,6 @@ public class MinusMediator : IMediator<string, Temperature>
 
     public bool StrategyTypeCheck(IStrategy<Temperature> s)
     {
-        return s is IMinusStrategy<Temperature>;
+        return s is IDefaultStrategy<Temperature>;
     }
 }
