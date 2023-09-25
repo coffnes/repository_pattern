@@ -1,10 +1,13 @@
 import { defineConfig } from 'vite';
 import { fileURLToPath, URL } from 'node:url';
 import vue from '@vitejs/plugin-vue';
+import vuetify from 'vite-plugin-vuetify';
 
-// https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [
+    vue(),
+    vuetify(),
+  ],
   resolve: {
     alias: [
       { find: '@', replacement: fileURLToPath(new URL('./src', import.meta.url)) },
@@ -12,7 +15,6 @@ export default defineConfig({
   },
   base: '/app',
   server: {
-    port: 3399,
     proxy: {
       '^/weatherforecast.*': {
         target: 'http://localhost:5154',

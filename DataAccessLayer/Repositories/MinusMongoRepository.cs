@@ -24,15 +24,19 @@ public class MinusMongoRepository : IMinusRepository<string>
     }
     public IList<TemperatureEntity<string>> GetByCity(string? city)
     {
+        List<TemperatureEntity<string>> result = new();
+        if(city == "" || city == "None") {
+            return _minusTemperatureCollection.Aggregate().ToList();
+        }
         var filter = Builders<TemperatureEntity<string>>
             .Filter
             .Eq(m => m.City, city);
-        var result = _minusTemperatureCollection.Aggregate()
+        result = _minusTemperatureCollection.Aggregate()
             .Match(filter)
             .ToList();
         return result;
     }
-    public IList<TemperatureEntity<string>> GetByDate(DateOnly dateFrom, DateOnly dateTo)
+    public IList<TemperatureEntity<string>> GetByDate(long dateFrom, long dateTo)
     {
         var filter = Builders<TemperatureEntity<string>>
             .Filter

@@ -14,16 +14,17 @@
 </template>
 
 <script>
-    import WeatherItem from '@/components/WeatherItem.vue'
-    export default {
-        components: {'weather-item': WeatherItem},
-        props: {
-            weathers: {
-                type: Array,
-                required: true
-            }
-        }
-    }
+import WeatherItem from '@/components/WeatherItem.vue';
+
+export default {
+  components: { 'weather-item': WeatherItem },
+  props: {
+    weathers: {
+      type: Array,
+      required: true,
+    },
+  },
+};
 </script>
 
 <style scoped>

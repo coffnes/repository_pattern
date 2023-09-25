@@ -15,7 +15,7 @@
             "stopAtEntry": false,
             "postDebugTask": "end",
             "serverReadyAction": {
-                "action": "openExternally",
+                "action": "debugWithChrome",
                 "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
                 "uriFormat": "%s/app"
             },

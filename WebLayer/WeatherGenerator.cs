@@ -25,7 +25,7 @@ public class WeatherGenerator : IHostedService
 
     public void Generate()
     {
-        for(int i = 0; i < 1; i++)
+        for(int i = 0; i < 4; i++)
         {
             ThreadPool.QueueUserWorkItem((state) => GeneratePlusTemperatures());
             ThreadPool.QueueUserWorkItem((state) => GenerateMinusTemperatures());
@@ -98,16 +98,16 @@ public class WeatherGenerator : IHostedService
 
     private string GenerateCity()
     {
-        List<string> cities = new(){ "Moscow", "Saint-Petesburg", "Novosibirsk", "Yekaterinburg", "Kazan", "Nizhny Novgorod" };
-        return cities[rnd.Next(cities.Count - 1)];
+        List<string> cities = new(){ "Moscow", "Saint-Petesburg", "Yekaterinburg", "Kazan", "Nizhny Novgorod" };
+        return cities[rnd.Next(cities.Count)];
     }
 
-    private DateOnly GenerateDate()
+    private long GenerateDate()
     {
         DateTime start = new(2023, 9, 1);
         DateTime stop = new(2023, 9, 30);
         int range = (stop - start).Days;
-        return DateOnly.FromDateTime(start.AddDays(rnd.Next(range)));
+        return (long)start.AddDays(rnd.Next(range)).Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
     }
 
     public async Task StartAsync(CancellationToken cancellationToken)
