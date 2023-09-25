@@ -10,19 +10,19 @@
                 label="Sort options">
             </v-select>
             <h3>Filter by city:</h3>
-            <v-autocomplete
+            <v-select
                 label="Choose city"
-                :items="['Moscow',
+                :items="['None',
+                  'Moscow',
                   'Saint-Petesburg',
-                  'Novosibirsk',
                   'Yekaterinburg',
                   'Kazan',
                   'Nizhny Novgorod']"
                 v-model="selectedCity">
-            </v-autocomplete>
+            </v-select>
             <h3>Filter by date</h3>
             <p>Select DateFrom and DateTo</p>
-            <date-picker v-model.lazy="selectedDate" range
+            <date-picker v-model="selectedDate" range
               :partial-range="false"
               :enable-time-picker="false">
             </date-picker>
@@ -33,7 +33,7 @@
                 class="border-opacity-50">
             </v-divider>
         </div>
-        <v-btn color="success">Add measurement</v-btn>
+        <add-dialog @create="addWeather"></add-dialog>
         <weather-list :weathers="sortedWeather"/>
     </div>
 </template>
@@ -41,9 +41,13 @@
 <script>
 import axios from 'axios';
 import WeatherList from '@/components/WeatherList.vue';
+import AddDialog from '@/components/UI/AddDialog.vue';
 
 export default {
-  components: { 'weather-list': WeatherList },
+  components: {
+    'weather-list': WeatherList,
+    'add-dialog': AddDialog,
+  },
   data() {
     return {
       weathers: [],
@@ -59,6 +63,15 @@ export default {
     };
   },
   methods: {
+    async addWeather(weather) {
+      await axios.post('/weatherforecast', { ...weather })
+        .then((response) => {
+          console.log(response);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
     async fetchWeathers() {
       try {
         const response = await axios.get('/weatherforecast');
@@ -77,7 +90,7 @@ export default {
     },
     async fetchWeatherByDate(dateFrom, dateTo) {
       try {
-        const response = await axios.get(`/weatherforecast/date/${dateFrom}-${dateTo}`);
+        const response = await axios.get(`/weatherforecast/date/${dateFrom}/${dateTo}`);
         this.weathers = response.data;
       } catch (e) {
         console.log(e);
@@ -110,15 +123,15 @@ export default {
   },
   watch: {
     selectedCity(city) {
-      if (city !== null) {
+      if (city !== 'None') {
         this.fetchWeathersByCity(city);
       } else {
         this.fetchWeathers();
       }
     },
     selectedDate(date) {
-      const dateFrom = `${date[0].getMonth() + 1}.${date[0].getDate()}.${date[0].getFullYear()}`;
-      const dateTo = `${date[1].getMonth() + 1}.${date[1].getDate()}.${date[1].getFullYear()}`;
+      const dateFrom = Math.round(date[0].getTime() / 1000);
+      const dateTo = Math.round(date[1].getTime() / 1000);
       this.fetchWeatherByDate(dateFrom, dateTo);
     },
   },

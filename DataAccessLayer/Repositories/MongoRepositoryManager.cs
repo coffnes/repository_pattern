@@ -31,7 +31,7 @@ public class MongoRepositoryManager
         return result;
     }
 
-    public IList<TemperatureEntity<string>> GetByDate(DateOnly dateFrom, DateOnly dateTo)
+    public IList<TemperatureEntity<string>> GetByDate(long dateFrom, long dateTo)
     {
         List<TemperatureEntity<string>> result = new();
         foreach(var r in _repositories)
@@ -50,5 +50,44 @@ public class MongoRepositoryManager
     public IList<TemperatureEntity<string>> GetOnlyZeroTemperature()
     {
         return _defaultRepository.GetAll().ToList();
+    }
+    public IList<TemperatureEntity<string>> GetByFilter(FilterOptions filter)
+    {
+        List<TemperatureEntity<string>> result = new();
+        List<TemperatureEntity<string>> resultByCity = new();
+        List<TemperatureEntity<string>> resultByDate = new();
+        foreach(var r in _repositories)
+        {
+            var filteredByCity = r.GetByCity(filter.selectedCity).ToList();
+            resultByCity = resultByCity.Union(filteredByCity).ToList();
+            if(filter.selectedDateFrom != "" && filter.selectedDateTo != "") {
+                var filteredByDate = r.GetByDate((long)Convert.ToDouble(filter.selectedDateFrom), (long)Convert.ToDouble(filter.selectedDateTo));
+                resultByDate = resultByDate.Union(filteredByDate).ToList();
+            }
+        }
+        if(resultByDate.Count != 0)
+            result = resultByCity.Intersect(resultByDate).ToList();
+        else
+            result = resultByCity.ToList();
+        if(filter.selectedSort != "" && filter.selectedSort != "None")
+        {
+            result.Sort((TemperatureEntity<string> x, TemperatureEntity<string> y) =>
+            {
+                if(filter.selectedSort == "date")
+                {
+                    return x.Date.CompareTo(y.Date);
+                }
+                if(filter.selectedSort == "city")
+                {
+                    return x.City.CompareTo(y.City);
+                }
+                if(filter.selectedSort == "temperatureC")
+                {
+                    return x.TemperatureC.CompareTo(y.TemperatureC);
+                }
+                return x.Date.CompareTo(y.Date);
+            });
+        }
+        return result;
     }
 }

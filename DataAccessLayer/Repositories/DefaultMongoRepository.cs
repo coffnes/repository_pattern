@@ -23,6 +23,9 @@ public class DefaultMongoRepository : IDefaultRepository<string>
     }
     public IList<TemperatureEntity<string>> GetByCity(string? city)
     {
+        if(city == "" || city == "None") {
+            return _zeroTemperatureCollection.Aggregate().ToList();
+        }
         var filter = Builders<TemperatureEntity<string>>
             .Filter
             .Eq(m => m.City, city);
@@ -31,7 +34,7 @@ public class DefaultMongoRepository : IDefaultRepository<string>
             .ToList();
         return result;
     }
-    public IList<TemperatureEntity<string>> GetByDate(DateOnly dateFrom, DateOnly dateTo)
+    public IList<TemperatureEntity<string>> GetByDate(long dateFrom, long dateTo)
     {
         var filter = Builders<TemperatureEntity<string>>
             .Filter

@@ -56,6 +56,10 @@ builder.Services.AddTransient<IDefaultRepository<string>, DefaultMongoRepository
 
 builder.Services.AddTransient<MongoRepositoryManager>();
 
+builder.Services.AddSpaStaticFiles(opt => opt.RootPath = "../ClientApp/dist");
+
+builder.Services.AddHttpClient();
+
 var app = builder.Build();
 
 // app.Services.GetRequiredService<Microsoft.AspNetCore.Hosting.IApplicationLifetime>()
@@ -66,6 +70,14 @@ app.UseCors("_myAllowSpecificOrigins");
 //app.UseHttpsRedirection();
 app.UseAuthorization();
 
+if(app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
+
+app.UseSpaStaticFiles();
+app.UseRouting();
+
 if (app.Environment.IsDevelopment())
 {
   app.MapToVueCliProxy(
@@ -74,8 +86,7 @@ if (app.Environment.IsDevelopment())
       npmScript: "dev",
       port: 3399,
       regex: "Compiled successfully!",
-      forceKill: true,
-      wsl: true);
+      forceKill: true);
 }
 
 if(app.Environment.IsDevelopment()) {
